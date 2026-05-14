@@ -8,3 +8,4 @@ _Claude Code entry point — imports AGENTS.md (MAP v1.0) and adds Claude-specif
 - Context approaching 70%: rewrite HANDOFF.md then run `/compact` to compress history
 - Always rewrite HANDOFF.md before running `/clear` or `/compact`
 - Keep AGENTS.md at 90 lines maximum
+- When AGENTS.md is modified, sync changes to .github/copilot-instructions.md

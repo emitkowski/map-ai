@@ -23,6 +23,7 @@ project/
 ├── AGENTS.md                    # MAP instructions — read by all AI agents
 ├── GEMINI.md                    # Gemini CLI entry point — imports AGENTS.md
 ├── CLAUDE.md                    # Claude Code wrapper — imports AGENTS.md
+├── .windsurfrules               # Windsurf entry point — imports AGENTS.md
 ├── HANDOFF.example.md           # Session state template (copy to HANDOFF.md)
 ├── CLAUDE.local.example.md      # Personal rules template (copy to CLAUDE.local.md)
 ├── README.md                    # This file — MAP v1.0 spec
@@ -51,6 +52,8 @@ project/
     ├── agents/                  # Agent context files (use agent.example.md)
     ├── api/                     # API documentation (use api.example.md)
     ├── integrations/            # Integration docs (use integration.example.md)
+    ├── GLOSSARY.md              # Domain terms — human-maintained
+    ├── BUGS_ARCHIVE.md          # Fixed bugs — Claude-maintained, append-only
     └── memory/                  # Session learnings (gitignored, use *.example.md)
 ```
 
@@ -58,11 +61,58 @@ project/
 
 | Tier | Files | When loaded |
 |---|---|---|
-| Always | AGENTS.md, HANDOFF.md | Every session |
+| Always | AGENTS.md | Every session |
+| On "continue" | HANDOFF.md | Continuation sessions only |
 | Conditional | docs/*.md | When task is relevant |
 | Auto-updated | docs/STATUS.md, docs/memory/* | Session end + write rules |
 
 _Note: some tools load additional files every session (e.g. Claude Code auto-loads `.claude/rules/*.md`)_
+
+## How files interact
+
+**1. Startup** — the tool reads its entry point, which loads AGENTS.md:
+```
+[Tool] → CLAUDE.md / GEMINI.md / .windsurfrules / agents.mdc / copilot-instructions.md
+                                        ↓
+                                   AGENTS.md
+                                  (session type?)
+                         ┌─────────────┴─────────────┐
+                    "continue"                   anything else
+                         ↓                            ↓
+                    HANDOFF.md               (HANDOFF skipped)
+                    STATUS.md                   STATUS.md
+                    MEMORY.md                   MEMORY.md
+                    BUGS.md                     BUGS.md
+                         └─────────────┬─────────────┘
+                                  work begins
+```
+
+**2. During work** — files load on demand as the task calls for them:
+```
+new feature / structure    → ARCHITECTURE.md, CODE_PATTERNS.md
+database / contracts       → SCHEMA.md, docs/memory/database.md
+writing tests              → TESTING_COVERAGE.md, BUGS.md
+unfamiliar domain term     → GLOSSARY.md
+past surprises             → docs/memory/[stack|testing|env].md
+specific agent / API       → docs/agents/*.md, docs/api/*.md
+```
+
+**3. Write rules** — the AI updates docs immediately as work progresses, without being asked:
+```
+bug found        → BUGS.md          bug fixed      → BUGS_ARCHIVE.md
+decision made    → ARCHITECTURE_HISTORY.md
+pattern found    → CODE_PATTERNS.md
+new term         → GLOSSARY.md
+surprise         → docs/memory/[topic].md
+schema changed   → SCHEMA.md
+```
+
+**4. Session end** — before closing, the AI runs the end ritual:
+```
+HANDOFF.md    ← rewritten   (state, blockers, pitfalls, next steps)
+STATUS.md     ← updated     (health, progress, project priorities)
+docs/memory/  ← appended    (learnings routed by topic)
+```
 
 ## Gitignored (developer-local)
 
@@ -72,7 +122,7 @@ CLAUDE.local.md         # Personal rules — optional
 .env                    # Secrets — never commit
 .claude/settings.local.json
 docs/MEMORY.md          # Learning index — personal
-docs/memory/*.md        # Learning files — personal
+docs/memory/*.md        # Learning files — personal (exception: shared.md is committed)
 ```
 
 ## Getting started
@@ -90,7 +140,7 @@ docs/memory/*.md        # Learning files — personal
 | GitHub Copilot | .github/copilot-instructions.md | ✓ imports AGENTS.md |
 | Cursor | AGENTS.md + .cursor/rules/ | ✓ native (rules/ for glob scoping) |
 | Gemini CLI | GEMINI.md | ✓ imports AGENTS.md |
-| Windsurf | AGENTS.md | ✓ native |
+| Windsurf | .windsurfrules | ✓ imports AGENTS.md |
 
 ## Governance
 

@@ -7,4 +7,5 @@ _Full instructions in AGENTS.md at project root_
 ## Gemini-specific notes
 - This project follows MAP v1.0 (Markdown for AI Processing)
 - All operating instructions, write rules, and session rituals are defined in AGENTS.md
-- Personal local rules file (CLAUDE.local.md for Claude, or equivalent) — load if present
+- Load @.claude/rules/security.md and @.claude/rules/testing.md every session
+- Personal local rules file: no standard equivalent for Gemini CLI — add preferences to a gitignored local file

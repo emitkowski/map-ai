@@ -1,6 +1,7 @@
 # BUGS.md
 _Known bugs — updated by Claude on discovery or after test failures_
 _Claude writes immediately on discovery — do not wait for session end_
+_Fixed and verified bugs move to docs/BUGS_ARCHIVE.md_
 
 <!-- Severity: blocking=no further work | high=no workaround | medium=workaround exists | low=minor -->
 

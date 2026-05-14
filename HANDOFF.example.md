@@ -1,5 +1,5 @@
 # HANDOFF.md
-_Last updated: YYYY-MM-DD HH:MM | Session duration: [DURATION]_
+_Last updated: YYYY-MM-DD HH:MM_
 _Copy this file to HANDOFF.md on first clone — see docs/SETUP.md_
 _Keep under 40 lines — rewrite completely each session, do not append_
 
@@ -26,11 +26,11 @@ _Session-level tasks — specific actions for this session (project priorities a
 3. [Following action]
 
 ## Fresh pitfalls — discovered this session
+_Max 3 entries — move to docs/memory/ if worth keeping long-term_
 - [Something that went wrong or took longer than expected]
 - [Edge case discovered]
 
 ## Context for next session
-[Things Claude should know upfront to avoid re-discovering this session's learnings.
-Use git log for file change history — capture insights here instead.]
+_Max 5 bullets — insights not visible in git log; avoid restating completed work_
 - [Key insight or constraint discovered this session]
 - [Decision made that affects next steps]

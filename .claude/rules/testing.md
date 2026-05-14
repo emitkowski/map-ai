@@ -4,7 +4,7 @@ _Human-maintained — always loaded by Claude Code every session_
 ## Coverage requirements
 - IMPORTANT: New code requires tests before marking a task complete
   (exception: first task on a new project may establish the test framework itself)
-- Minimum coverage threshold: [N]% (suggest 80% for new projects)
+- Minimum coverage threshold: 80% (adjust here if project requires different)
   Run coverage command and update docs/TESTING_COVERAGE.md after adding tests
 - Critical paths require explicit test coverage regardless of overall percentage
 

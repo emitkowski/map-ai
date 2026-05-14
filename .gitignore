@@ -1,3 +1,7 @@
+# OS noise — never commit
+.DS_Store
+Thumbs.db
+
 # Environment files — never commit secrets
 /.idea
 .env
@@ -14,6 +18,7 @@ CLAUDE.local.md
 docs/MEMORY.md
 docs/memory/*.md
 !docs/memory/*.example.md
+!docs/memory/shared.md
 
 # Windows metadata files — created on download, never needed
 *:Zone.Identifier

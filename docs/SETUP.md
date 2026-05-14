@@ -14,18 +14,21 @@ _Last updated: YYYY-MM-DD_
 # 1. Clone
 git clone [repo-url] && cd [project-name]
 
-# 2. Fill in AGENTS.md line 2 — [PROJECT NAME] and [STACK DETAILS]
+# 2. Fill in AGENTS.md — line 2: project name and stack; line 3: today's date
 
 # 3. Initialize personal files (gitignored)
 cp HANDOFF.example.md HANDOFF.md
 cp docs/MEMORY.example.md docs/MEMORY.md
 cp docs/memory/gotchas.example.md docs/memory/gotchas.md
-cp docs/memory/framework.example.md docs/memory/framework.md  # rename to match stack; update AGENTS.md + docs/MEMORY.md
+cp docs/memory/framework.example.md docs/memory/[stack].md    # e.g. laravel.md; then update [stack].md ref in AGENTS.md and docs/MEMORY.md
 cp docs/memory/database.example.md docs/memory/database.md
 cp docs/memory/testing.example.md docs/memory/testing.md
 cp docs/memory/environment.example.md docs/memory/environment.md
 cp CLAUDE.local.example.md CLAUDE.local.md   # optional
 cp docs/memory/agents.example.md docs/memory/agents.md  # optional — skip if no agent pipeline
+
+# 3b. Initialize shared team files (committed to repo — not gitignored)
+cp docs/memory/shared.example.md docs/memory/shared.md
 
 # 4. Install dependencies
 [install command]
