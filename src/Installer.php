@@ -114,10 +114,11 @@ BLOCK;
         return ['action' => $action, 'file' => $file];
     }
 
+    /** @return 'skipped'|'updated' */
     private function mergeGitignore(string $targetPath): string
     {
         $gitignorePath = $targetPath.'/.gitignore';
-        $existing = file_exists($gitignorePath) ? file_get_contents($gitignorePath) : '';
+        $existing = file_exists($gitignorePath) ? (file_get_contents($gitignorePath) ?: '') : '';
         $existingLines = $existing !== '' ? array_map('trim', explode("\n", $existing)) : [];
 
         foreach (self::GITIGNORE_SENTINELS as $sentinel) {
