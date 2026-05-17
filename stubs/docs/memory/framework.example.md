@@ -1,7 +1,7 @@
-# memory/framework.md
+# memory/[stack].md
 _Framework and language surprises specific to this project_
 _Rename this file to match your stack — e.g. laravel.md, rails.md, django.md_
-_When renaming: also update the reference in CLAUDE.md and docs/MEMORY.md_
+_When renaming: also update the reference in AGENTS.md and docs/MEMORY.md_
 _Claude-maintained — append when something unexpected is discovered_
 _Max 50 entries — summarise or remove resolved items when full_
 

@@ -28,7 +28,7 @@ $result = (new Installer)->install(
 );
 ```
 
-`$result` contains a `files` array with per-file `action` (`copy`, `update`, `skip`, `missing`) and a `gitignore` key (`updated` or `skipped`).
+`$result` contains a `files` array with per-file `action` (`copy`, `update`, `skip`, `missing`) and `backed_up` (true when an existing file was backed up to `<file>.bak` before overwriting), plus a `gitignore` key (`updated` or `skipped`).
 
 ## Development
 

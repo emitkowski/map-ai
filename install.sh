@@ -95,7 +95,7 @@ SKIPPED=0
 MISSING=0
 
 for file in "${FILES[@]}"; do
-  src="$SCRIPT_DIR/$file"
+  src="$SCRIPT_DIR/stubs/$file"
   dst="$TARGET/$file"
 
   if [[ ! -f "$src" ]]; then

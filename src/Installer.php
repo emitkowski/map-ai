@@ -71,7 +71,7 @@ BLOCK;
 
     /**
      * @return array{
-     *     files: list<array{action: 'copy'|'update'|'skip'|'missing', file: string}>,
+     *     files: list<array{action: 'copy'|'update'|'skip'|'missing', file: string, backed_up: bool}>,
      *     gitignore: 'updated'|'skipped'
      * }
      */
@@ -89,21 +89,27 @@ BLOCK;
         ];
     }
 
-    /** @return array{action: 'copy'|'update'|'skip'|'missing', file: string} */
+    /** @return array{action: 'copy'|'update'|'skip'|'missing', file: string, backed_up: bool} */
     private function copyFile(string $stubsPath, string $targetPath, string $file, bool $force): array
     {
         $src = $stubsPath.'/'.$file;
         $dst = $targetPath.'/'.$file;
 
         if (! file_exists($src)) {
-            return ['action' => 'missing', 'file' => $file];
+            return ['action' => 'missing', 'file' => $file, 'backed_up' => false];
         }
 
         if (file_exists($dst) && ! $force) {
-            return ['action' => 'skip', 'file' => $file];
+            return ['action' => 'skip', 'file' => $file, 'backed_up' => false];
         }
 
         $action = file_exists($dst) ? 'update' : 'copy';
+        $backedUp = false;
+
+        if ($action === 'update') {
+            copy($dst, $dst.'.bak');
+            $backedUp = true;
+        }
 
         if (! is_dir(dirname($dst))) {
             mkdir(dirname($dst), 0755, true);
@@ -111,7 +117,7 @@ BLOCK;
 
         copy($src, $dst);
 
-        return ['action' => $action, 'file' => $file];
+        return ['action' => $action, 'file' => $file, 'backed_up' => $backedUp];
     }
 
     /** @return 'skipped'|'updated' */

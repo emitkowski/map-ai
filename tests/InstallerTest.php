@@ -136,3 +136,48 @@ it('returns skipped when gitignore entries already present', function () {
     $result = $this->installer->install($this->stubsPath, $this->tempDir, force: true);
     expect($result['gitignore'])->toBe('skipped');
 });
+
+it('does not set backed_up for new copies', function () {
+    $result = $this->installer->install($this->stubsPath, $this->tempDir);
+
+    $copied = array_filter($result['files'], fn ($f) => $f['action'] === 'copy');
+    foreach ($copied as $file) {
+        expect($file['backed_up'])->toBeFalse();
+    }
+});
+
+it('creates a backup when force-overwriting an existing file', function () {
+    $agentsPath = $this->tempDir.'/AGENTS.md';
+    file_put_contents($agentsPath, 'original content');
+
+    $result = $this->installer->install($this->stubsPath, $this->tempDir, force: true);
+
+    $updated = array_filter($result['files'], fn ($f) => $f['file'] === 'AGENTS.md');
+    expect(array_values($updated)[0]['backed_up'])->toBeTrue();
+    expect($this->tempDir.'/AGENTS.md.bak')->toBeFile();
+    expect(file_get_contents($this->tempDir.'/AGENTS.md.bak'))->toBe('original content');
+});
+
+it('does not set backed_up for skipped files', function () {
+    file_put_contents($this->tempDir.'/AGENTS.md', 'custom content');
+
+    $result = $this->installer->install($this->stubsPath, $this->tempDir);
+
+    $skipped = array_filter($result['files'], fn ($f) => $f['file'] === 'AGENTS.md');
+    expect(array_values($skipped)[0]['backed_up'])->toBeFalse();
+});
+
+it('root template files match stubs', function () {
+    $rootPath = dirname($this->stubsPath);
+    $normalize = fn (string $s): string => str_replace("\r\n", "\n", $s);
+
+    foreach (Installer::FILES as $file) {
+        $rootFile = $rootPath.'/'.$file;
+        $stubFile = $this->stubsPath.'/'.$file;
+
+        expect($rootFile)->toBeFile();
+        expect($normalize((string) file_get_contents($rootFile)))->toBe(
+            $normalize((string) file_get_contents($stubFile)),
+        );
+    }
+});
