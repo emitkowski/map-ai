@@ -1,0 +1,54 @@
+{
+    "name": "larablocks/map-ai",
+    "description": "MAP AI documentation scaffold — framework-agnostic",
+    "keywords": [
+        "larablocks",
+        "ai",
+        "agents",
+        "documentation",
+        "scaffold"
+    ],
+    "homepage": "https://github.com/larablocks/map-ai",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eric Mitkowski",
+            "email": "eric.mitkowski@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.4"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.14",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-arch": "^4.0",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-deprecation-rules": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "larablocks\\MapAi\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "larablocks\\MapAi\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "analyse": "vendor/bin/phpstan analyse",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "prefer-stable": true
+}

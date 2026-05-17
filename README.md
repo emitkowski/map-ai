@@ -1,152 +1,44 @@
-# MAP v1.0 — Markdown for AI Processing
+# map-ai
 
-> A structured Markdown convention designed to make content predictable, chunkable,
-> and easily consumable by AI systems (LLMs, embeddings, agents).
+Framework-agnostic core for the **MAP AI** documentation scaffold. Contains the stubs and installer logic used by framework-specific packages.
 
 ## What is MAP?
 
-MAP is a project documentation standard that gives AI coding agents the context they
-need to work effectively — without re-explanation every session. It defines which
-files exist, what each owns, how they stay current, and how agents should use them.
+MAP (Multi-Agent Project) is a documentation standard for AI-assisted development. It provides a structured set of markdown files that AI coding agents (Claude, Gemini, Copilot, Cursor) read at session start to get consistent context about your project.
 
-## Core principles
+## Framework packages
 
-- **Tiered loading** — not all context loads every session; files load when relevant
-- **Single ownership** — every file has one clear owner and one update trigger
-- **Token efficiency** — lean always-loaded tier, rich conditional tier
-- **Self-maintaining** — files update through session rituals and write rules, not manual effort
+Install MAP via your framework's package — this core package is a dependency, not meant to be required directly:
 
-## File structure
+| Framework | Package |
+|-----------|---------|
+| Laravel | [`larablocks/map-ai-laravel`](https://github.com/larablocks/map-ai-laravel) |
 
-```
-project/
-├── AGENTS.md                    # MAP instructions — read by all AI agents
-├── GEMINI.md                    # Gemini CLI entry point — imports AGENTS.md
-├── CLAUDE.md                    # Claude Code wrapper — imports AGENTS.md
-├── .windsurfrules               # Windsurf entry point — imports AGENTS.md
-├── HANDOFF.example.md           # Session state template (copy to HANDOFF.md)
-├── CLAUDE.local.example.md      # Personal rules template (copy to CLAUDE.local.md)
-├── README.md                    # This file — MAP v1.0 spec
-├── .gitignore
-├── .github/
-│   └── copilot-instructions.md   # Copilot entry point — imports AGENTS.md
-├── .cursor/
-│   └── rules/
-│       └── agents.mdc            # Cursor entry point — imports AGENTS.md
-├── .claude/
-│   ├── settings.json            # Claude Code hook configuration
-│   └── rules/
-│       ├── security.md          # Always-loaded security rules
-│       └── testing.md           # Always-loaded testing rules
-└── docs/
-    ├── STATUS.md                # Project health — Claude-maintained
-    ├── MEMORY.example.md        # Learning index template
-    ├── ARCHITECTURE.md          # Current system map — Claude-maintained
-    ├── ARCHITECTURE_HISTORY.md  # Decision log — append-only, Claude-maintained
-    ├── CODE_PATTERNS.md         # Project patterns — Claude-maintained
-    ├── SCHEMA.md                # Data layer — Claude-maintained
-    ├── BUGS.md                  # Known bugs — Claude-maintained
-    ├── TESTING_COVERAGE.md      # Coverage state — Claude-maintained
-    ├── DOCKER.md                # Container reference — human-maintained
-    ├── SETUP.md                 # Onboarding — human-maintained
-    ├── agents/                  # Agent context files (use agent.example.md)
-    ├── api/                     # API documentation (use api.example.md)
-    ├── integrations/            # Integration docs (use integration.example.md)
-    ├── GLOSSARY.md              # Domain terms — human-maintained
-    ├── BUGS_ARCHIVE.md          # Fixed bugs — Claude-maintained, append-only
-    └── memory/                  # Session learnings (gitignored, use *.example.md)
+## For package authors
+
+If you want to build a MAP installer for another framework, require this package and use:
+
+```php
+use larablocks\MapAi\Installer;
+
+$result = (new Installer)->install(
+    stubsPath: Installer::stubsPath(),
+    targetPath: '/path/to/project',
+    force: false,
+);
 ```
 
-## Loading tiers
+`$result` contains a `files` array with per-file `action` (`copy`, `update`, `skip`, `missing`) and a `gitignore` key (`updated` or `skipped`).
 
-| Tier | Files | When loaded |
-|---|---|---|
-| Always | AGENTS.md | Every session |
-| On "continue" | HANDOFF.md | Continuation sessions only |
-| Conditional | docs/*.md | When task is relevant |
-| Auto-updated | docs/STATUS.md, docs/memory/* | Session end + write rules |
+## Development
 
-_Note: some tools load additional files every session (e.g. Claude Code auto-loads `.claude/rules/*.md`)_
-
-## How files interact
-
-**1. Startup** — the tool reads its entry point, which loads AGENTS.md:
-```
-[Tool] → CLAUDE.md / GEMINI.md / .windsurfrules / agents.mdc / copilot-instructions.md
-                                        ↓
-                                   AGENTS.md
-                                  (session type?)
-                         ┌─────────────┴─────────────┐
-                    "continue"                   anything else
-                         ↓                            ↓
-                    HANDOFF.md               (HANDOFF skipped)
-                    STATUS.md                   STATUS.md
-                    MEMORY.md                   MEMORY.md
-                    BUGS.md                     BUGS.md
-                         └─────────────┬─────────────┘
-                                  work begins
+```bash
+composer install
+composer test
+composer analyse
+composer format
 ```
 
-**2. During work** — files load on demand as the task calls for them:
-```
-new feature / structure    → ARCHITECTURE.md, CODE_PATTERNS.md
-database / contracts       → SCHEMA.md, docs/memory/database.md
-writing tests              → TESTING_COVERAGE.md, BUGS.md
-unfamiliar domain term     → GLOSSARY.md
-past surprises             → docs/memory/[stack|testing|env].md
-specific agent / API       → docs/agents/*.md, docs/api/*.md
-```
+## License
 
-**3. Write rules** — the AI updates docs immediately as work progresses, without being asked:
-```
-bug found        → BUGS.md          bug fixed      → BUGS_ARCHIVE.md
-decision made    → ARCHITECTURE_HISTORY.md
-pattern found    → CODE_PATTERNS.md
-new term         → GLOSSARY.md
-surprise         → docs/memory/[topic].md
-schema changed   → SCHEMA.md
-```
-
-**4. Session end** — before closing, the AI runs the end ritual:
-```
-HANDOFF.md    ← rewritten   (state, blockers, pitfalls, next steps)
-STATUS.md     ← updated     (health, progress, project priorities)
-docs/memory/  ← appended    (learnings routed by topic)
-```
-
-## Gitignored (developer-local)
-
-```
-HANDOFF.md              # Session state — personal
-CLAUDE.local.md         # Personal rules — optional
-.env                    # Secrets — never commit
-.claude/settings.local.json
-docs/MEMORY.md          # Learning index — personal
-docs/memory/*.md        # Learning files — personal (exception: shared.md is committed)
-```
-
-## Getting started
-
-1. Copy this template into your project root
-2. Follow `docs/SETUP.md` — it covers all initialization steps including filling in `AGENTS.md`
-3. Start a session — type anything to begin fresh, or "continue" to resume
-
-## AI agent compatibility
-
-| Agent | File | Status |
-|---|---|---|
-| Claude Code | CLAUDE.md | ✓ native |
-| OpenAI Codex | AGENTS.md | ✓ native |
-| GitHub Copilot | .github/copilot-instructions.md | ✓ imports AGENTS.md |
-| Cursor | AGENTS.md + .cursor/rules/ | ✓ native (rules/ for glob scoping) |
-| Gemini CLI | GEMINI.md | ✓ imports AGENTS.md |
-| Windsurf | .windsurfrules | ✓ imports AGENTS.md |
-
-## Governance
-
-MAP is developed as an open convention aligned with [AGENTS.md](https://agents.md),
-the cross-tool standard stewarded by the Agentic AI Foundation under the Linux Foundation.
-
-## Version
-
-MAP v1.0 — initial release
+MIT
